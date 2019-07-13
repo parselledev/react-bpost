@@ -1,0 +1,54 @@
+.c-dropzone
+  display: grid
+  grid-gap: 5px
+  width: 100%
+
+  &__area
+    display: grid
+    grid-gap: 5px
+    align-items: center
+    justify-items: center
+    min-height: 70px
+    width: 100%
+    padding: 10px
+    border: 2px dashed $color-grey
+    border-radius: 5px
+    background: $color-grey-smoke
+    cursor: pointer
+    text-align: center
+    transition: all 0.3s
+
+    &.isDrag,
+    &:hover
+      border-color: $color-blue
+
+    &.isDrag
+      background: rgba($color-blue, 0.2)
+      .c-dropzone__icon
+        color: $color-blue
+
+  &__input
+    display: none
+
+  &__icon
+    color: $color-grey
+    font-size: 24px
+    transition: all 0.3s
+
+  &__title
+    color: $color-grey-dark
+
+  &__files
+    display: grid
+    grid-gap: 10px
+    align-content: start
+    align-items: start
+    grid-template-columns: repeat(auto-fill, 60px)
+
+  &__preview
+    display: grid
+    width: 60px
+    max-height: 60px
+    overflow: hidden
+    border-radius: 5px
+    border: 2px solid $color-grey

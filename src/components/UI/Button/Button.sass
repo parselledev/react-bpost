@@ -1,0 +1,130 @@
+.c-btn
+  display: grid
+  text-decoration: none
+  text-align: center
+  cursor: pointer
+  outline: none
+  transition: 0.15s
+  border: none
+  
+  // *
+  //   font-weight: 500
+
+  &__icon
+    font-size: 10px
+
+  //Size
+  +mod('--medium')
+    width: 100%
+    min-width: 30px
+    min-height: 30px
+    padding: 7px 8px
+    border-radius: 5px
+    border: none
+    font-size: 14px
+
+  +mod('--small')
+    width: 100%
+    min-width: 25px
+    min-height: 25px
+    padding: 5px 8px
+    border-radius: 5px
+    border: none
+
+  //Type
+  +mod('--ghost')
+    background: transparent !important
+    border: 1px solid
+
+  +mod('--circle')
+    border-radius: 50%
+
+  //Icon
+  +mod('--icon')
+    .c-btn__content
+      display: grid
+      justify-items: center
+      align-items: center
+      pointer-events: 
+
+  +mod('--iconed')
+    .c-btn__content
+      display: grid
+      justify-items: center
+      align-items: center
+      grid-template-columns: auto auto
+      grid-gap: 5px
+      pointer-events: 
+
+  //Color
+  +mod('--blue')
+    background: $color-blue
+    border-color: $color-blue
+    color: white
+    +on-event
+      background: darken($color-blue, 12%)
+    &:disabled
+      opacity: 0.5
+      cursor: not-allowed
+
+    +mod('--ghost')
+      color: $color-blue
+      +on-event
+        background: $color-blue !important
+        color: white
+
+  +mod('--success')
+    background: $color-success
+    color: white
+    +on-event
+      background: darken($color-success, 12%)
+    &:disabled
+      opacity: 0.5
+      cursor: not-allowed
+
+  +mod('--danger')
+    background: $color-danger
+    border-color: $color-danger
+    color: white
+    +on-event
+      background: darken($color-danger, 12%)
+    &:disabled
+      opacity: 0.5
+      cursor: not-allowed
+
+    +mod('--ghost')
+      color: $color-danger
+      +on-event
+        background: $color-danger !important
+        color: white
+
+  +mod('--warning')
+    background: $color-warning
+    border-color: $color-warning
+    color: white
+    +on-event
+      background: darken($color-warning, 12%)
+    &:disabled
+      opacity: 0.5
+      cursor: not-allowed
+
+    +mod('--ghost')
+      color: $color-warning
+      +on-event
+        background: $color-warning !important
+        color: white
+
+  +mod('--grey')
+    background: $color-grey-smoke
+    color: $color-grey-dark
+    +on-event
+      background: darken($color-grey-smoke, 10%)
+
+
+  //Extensions
+  +mod('--wide')
+    width: 100%
+    max-width: 100%
+
+    +on-event
+      animation: none

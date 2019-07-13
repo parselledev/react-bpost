@@ -1,0 +1,88 @@
+.app
+	&__sidebar
+		display: grid
+		grid-gap: 3px
+		background: white
+		border-radius: 5px
+		border: 1px solid $color-grey-thin
+		padding-bottom: 5px
+		box-shadow: $shadow-main
+		+media-mx(680px)
+			grid-template-columns: auto 20px
+			grid-template-rows: auto
+			justify-content: space-between
+			align-items: center
+	
+		.sidebar
+			&__header
+				width: 100%
+				padding: 12.4px 10px
+				border-bottom: 1px solid $color-grey-thin
+
+			&__logo
+				width: 128px
+
+			&__navBtn
+				display: none
+				width: 20px
+				height: 20px
+				border: none
+				background: url('~Assets/img/nav-icon.svg') center no-repeat
+				background-size: contain
+				+media-mx(680px)
+					display: grid
+
+			&__nav
+				display: grid
+				overflow: hidden
+				&.visible
+					+media-mx(680px)
+						transform: translateX(-10px)
+						z-index: 200
+				+media-mx(680px)
+					height: 100%
+					position: absolute
+					top: 0
+					transform: translateX(-150%)
+					background: white
+					box-shadow: 0 0 15px rgba(0,0,0,0.2)
+					align-items: start
+					align-content: start
+					min-width: 160px
+					padding: 10px 0
+					transition: transform 0.3s
+
+		.nav
+			&__icon
+				color: $color-grey
+				display: grid
+
+			&__link
+				display: grid
+				grid-template-columns: 16px auto
+				grid-gap: 7px
+				align-items: center
+				justify-content: start
+				justify-items: center
+				color: $color-grey-dark
+				padding: 8px 5px 8px 10px
+				background: transparent
+				text-decoration: none
+				text-align: left
+				transition: all 0.2s
+
+				&:hover
+					// background: rgba($color-blue, 0.1)
+					background: $color-grey-smoke
+
+				// &.is-active
+				//   background: $color-blue
+				//   color: white
+				//   .nav__icon
+				//     color: white
+
+			&__line
+				width: 100%
+				height: 1px
+				margin: 9px 0
+				background: $color-grey

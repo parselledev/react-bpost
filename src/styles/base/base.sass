@@ -1,0 +1,18 @@
+*,
+*:before,
+*:after
+  box-sizing: border-box
+
+body
+  font-size: $font-size
+  padding: 0 !important
+
+.wrap
+  display: grid
+  width: 100%
+  max-width: 990px
+  margin: 0 auto
+  padding: 18px 10px
+
+  +media-mx(680px)
+    padding: 10px

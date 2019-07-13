@@ -1,0 +1,89 @@
+.mails__list .list
+
+	&__item
+		display: grid
+		background: white
+		border-radius: 5px
+		box-shadow: $shadow-main
+		border-left-width: 3px
+
+		&.inProgress
+			// border: 2px solid $color-warning
+			border-color: $color-warning
+			border-style: dashed
+		
+		&.isOwner
+			border-left-color: $color-blue
+			border-left-style: solid
+
+.mails__list .item
+	&__firstPart
+		display: grid
+		grid-template-columns: 18px auto auto
+		grid-gap: 5px
+		justify-items: start
+		align-items: center
+		padding: 8px 10px
+
+	&__social
+		display: grid
+		width: 18px
+		height: 18px
+		background-size: contain
+
+		&--vk
+			background: url('~Assets/img/vk-icon.png') center no-repeat
+		&--tg
+			background: url('~Assets/img/tg-icon.png') center no-repeat
+
+	&__text
+		font-weight: 500
+		padding-left: 2px
+
+	&__actions
+		display: grid
+		grid-template-columns: auto auto
+		grid-gap: 5px
+		justify-self: end
+
+	&__postmanPart
+		display: grid
+		grid-template-columns: minmax(200px, 600px)
+		justify-content: center
+		grid-gap: 10px
+		padding: 10px
+		border-top: 1px solid $color-grey-thin
+
+		+media-mx(980px)
+			justify-content: end
+
+		&.visible
+			display: grid
+
+	&__helpActions
+		display: grid
+		grid-template-columns: 1fr 1fr
+		align-items: center
+		grid-gap: 10px
+
+	&__screenshot
+		display: grid
+		grid-gap: 5px
+		justify-items: stretch
+
+	&__completeBtn
+		justify-self: end
+		width: auto
+
+	&__complete
+		display: grid
+		grid-template-columns: auto auto
+		align-items: center
+		grid-gap: 5px
+		justify-self: end
+		width: auto
+
+	&__deleteBtn
+		grid-column: -1
+
+	

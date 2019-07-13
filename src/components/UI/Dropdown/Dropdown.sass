@@ -1,0 +1,39 @@
+.c-dropdown
+  display: grid
+  position: relative
+  z-index: 50
+
+  &__list
+    padding: 8px
+    position: absolute
+    right: 0
+    bottom: -5px
+    display: grid
+    grid-gap: 5px
+    width: auto
+    border-radius: 5px
+    background: white
+    transform: translateY(100%)
+    opacity: 0
+    transition: opacity 0.3s
+    visibility: hidden
+    box-shadow: 0 0 15px rgba(0,0,0,0.1)
+
+    &.visible
+      opacity: 1
+      visibility: visible
+
+  &__item
+    padding: 6px 10px
+    border-radius: 5px
+    cursor: pointer
+    color: $color-dark
+
+    &:hover
+      background: $color-grey-thin
+
+    &.disabled
+      cursor: not-allowed
+      pointer-events: none
+      background: $color-blue
+      color: white
