@@ -1,13 +1,17 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types'
-import compose from '../../../utils/compose';
+import compose from 'Utils/compose';
 import {connect} from 'react-redux';
-import withApiService from '../../hoc/withApiService';
-import {fetchAddMail} from '../../../actions/mailsActions';
-import Modal from '../../UI/Modal/Modal';
-import Form from '../../UI/Form/Form';
-import Button from '../../UI/Button/Button';
-import Input from '../../UI/Input/Input';
+import withApiService from 'Components/hoc/withApiService';
+import {createStructuredSelector} from 'reselect';
+
+import {selectAuthUsername} from 'Redux/auth/auth.selectors';
+import {mailsAdd} from 'Redux/mails/mails.actions';
+
+import Modal from 'Components/UI/Modal/Modal';
+import Form from 'Components/UI/Form/Form';
+import Button from 'Components/UI/Button/Button';
+import Input from 'Components/UI/Input/Input';
 import {Formik, Field} from 'formik';
 import * as Yup from 'yup';
 import {faEdit} from '@fortawesome/free-solid-svg-icons';
@@ -15,9 +19,9 @@ import {faEdit} from '@fortawesome/free-solid-svg-icons';
 class MailsAddContainer extends Component {
 
   static propTypes = {
-    userName: PropTypes.string,
+    username: PropTypes.string,
     mails: PropTypes.object,
-    onAddMail: PropTypes.func
+    mailsAdd: PropTypes.func
   };
 
   state = {
@@ -32,8 +36,8 @@ class MailsAddContainer extends Component {
 
   handleSubmit = (values, {resetForm}) => {
     const {social, target, text} = values;
-    const {userName} = this.props;
-    this.props.onAddMail(userName, social, target, text);
+    const {username} = this.props;
+    this.props.mailsAdd(username, social, target, text);
     resetForm(this.formInitialValues);
     this.setState({modalVisible: false});
   }
@@ -88,29 +92,29 @@ class MailsAddContainer extends Component {
     );
 
     return(
-      <Modal
-        title="Добавить письмо"
-        content={form}
-        visible={this.state.modalVisible}>
-        <Button
-          className="mails__addBtn"
-          classMod="medium--iconed--success"
-          text="Написать"
-          icon={faEdit}/>
-      </Modal>
+      <div className="mails__add">
+        <Modal
+          title="Добавить письмо"
+          content={form}
+          visible={this.state.modalVisible}>
+          <Button
+            className="mails__addBtn"
+            classMod="medium--iconed--success"
+            text="Написать"
+            icon={faEdit}/>
+        </Modal>
+      </div>
     );
   }
 }
 
-const mapStateToProps = ({login:{userName}}) => {
-  return {userName};
-}
+const mapStateToProps = createStructuredSelector({
+  username: selectAuthUsername
+});
 
-const mapDispatchToProps = (dispatch, {apiService}) => {
-  return {
-    onAddMail: (userName, social, target, text) => dispatch(fetchAddMail(dispatch, apiService, userName, social, target, text))
-  };
-}
+const mapDispatchToProps = (dispatch, {apiService}) => ({
+  mailsAdd: (username, social, target, text) => dispatch(mailsAdd(dispatch, apiService, username, social, target, text))
+});
 
 export default compose(
   withApiService(),

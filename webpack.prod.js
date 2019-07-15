@@ -33,7 +33,12 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.jsx'],
     alias: {
-      Assets: path.resolve(__dirname, 'src/assets/')
+      Assets: path.resolve(__dirname, 'src/assets/'),
+      Styles: path.resolve(__dirname, 'src/styles/'),
+      Redux: path.resolve(__dirname, 'src/redux/'),
+      Pages: path.resolve(__dirname, 'src/pages/'),
+      Components: path.resolve(__dirname, 'src/components/'),
+      Utils: path.resolve(__dirname, 'src/utils/'),
     }
   },
   optimization: {
@@ -41,7 +46,7 @@ module.exports = {
       new UglifyJsPlugin({
         cache: true,
         parallel: true,
-        sourceMap: true //set to true if you want JS source maps
+        sourceMap: false //set to true if you want JS source maps
       })
     ],
     splitChunks: {
@@ -62,15 +67,6 @@ module.exports = {
         use: [
           {
             loader: "babel-loader",
-            options: {
-              presets: [
-                "@babel/preset-env",
-                "@babel/preset-react"
-              ],
-              plugins: [
-                "@babel/plugin-proposal-class-properties"
-              ]
-            }
           }
         ]
       },
@@ -93,7 +89,7 @@ module.exports = {
           'style-loader',
           {
             loader: 'css-loader',
-            options: {sourceMap: true}
+            options: {sourceMap: false}
           },
         ]
       },

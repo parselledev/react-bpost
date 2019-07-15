@@ -2,7 +2,7 @@ import {
   FETCH_NEWS_REQUEST,
   FETCH_NEWS_SUCCESS,
   FETCH_NEWS_FAILURE
-} from '../constants/actionTypes';
+} from './news.types';
 
 const INITIAL_STATE = {
   data: [],

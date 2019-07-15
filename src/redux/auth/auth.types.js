@@ -1,0 +1,4 @@
+export const AUTH_SIGN_IN = 'AUTH_SIGN_IN';
+export const AUTH_SIGN_UP = 'AUTH_SIGN_UP';
+export const AUTH_FETCH_REQUEST = 'AUTH_FETCH_REQUEST';
+export const AUTH_FETCH_FAILURE = 'AUTH_FETCH_FAILURE';

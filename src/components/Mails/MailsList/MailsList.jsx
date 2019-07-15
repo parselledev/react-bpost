@@ -1,44 +1,54 @@
-import React, {Component} from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
-import compose from '../../../utils/compose';
-import withApiService from '../../hoc/withApiService';
+import compose from 'Utils/compose';
+import withApiService from 'Components/hoc/withApiService';
+import {createStructuredSelector} from 'reselect';
+
+import {selectAuthUsername} from 'Redux/auth/auth.selectors';
+import {
+  selectMailsData,
+  selectMailsFetching,
+  selectMailsFilterSocial,
+  selectMailsFilterCategory,
+  selectMailsSearch
+} from 'Redux/mails/mails.selectors';
+import {mailsStart, mailsCancel, mailsComplete, mailsDelete} from 'Redux/mails/mails.actions';
+
 import './MailsList.sass';
-import MailsListItem from '../MailsListItem/MailsListItem';
-import {fetchStartMail, fetchCancelMail, fetchCompleteMail,fetchDeleteMail} from '../../../actions/mailsActions';
-import Spin from '../../UI/Spin/Spin';
+import MailsListItem from 'Components/Mails/MailsListItem/MailsListItem';
+import Spin from 'Components/UI/Spin/Spin';
 
 const MailsList = ({
-  userName,
+  username,
   mails,
   fetching,
-  filter,
+  filterSocial,
+  filterCategory,
   search,
-  category,
-  onStartMail,
-  onCancelMail,
-  onCompleteMail,
-  onDeleteMail}) => {
-  
+  mailsStart,
+  mailsCancel,
+  mailsComplete,
+  mailsDelete
+}) => {
+
   if(mails == null || (!fetching && Object.keys(mails).length == 0)) return <p>Писем нет</p>
   if(fetching && Object.keys(mails).length == 0) return <Spin />
 
-  const processMails = (mails, filter, search, category) => {
+  const processMails = (mails, filterSocial, filterCategory, search) => {
     let result = {};
     let isCategory = true;
 
     for(let key in mails) {
       const mail = mails[key];
-
-      switch(category) {
+      
+      switch(filterCategory) {
         case 'ACTIVE':
-          isCategory = !mail.completed && (userName == mail.postman || !mail.postman);
+          isCategory = !mail.completed && (username == mail.postman || !mail.postman);
           break;
-        
         case 'MINE':
-          isCategory = userName == mail.postman || userName == mail.owner;
+          isCategory = username == mail.postman || username == mail.owner;
           break;
-
         case 'COMPLETED':
           isCategory = mail.completed == true;
           break;
@@ -46,9 +56,8 @@ const MailsList = ({
 
       if(
         mail &&
-        // (mail.text.toLowerCase().indexOf(search.toLowerCase()) > -1) &&
         (mail.text.toLowerCase().includes(search.toLowerCase())) &&
-        (mail.social === filter || filter === 'ALL') &&
+        (mail.social === filterSocial || filterSocial === 'ALL') &&
         isCategory) {
         result[key] = mail;
       }
@@ -56,7 +65,7 @@ const MailsList = ({
     return result;
   }
 
-  const visibleMails = processMails(mails, filter, search, category);
+  const visibleMails = processMails(mails, filterSocial, filterCategory, search);
 
   return(
     Object.keys(visibleMails).length != 0 ?
@@ -68,12 +77,12 @@ const MailsList = ({
                 key={key}
                 id={key}
                 fetching={fetching}
-                userName={userName}
+                username={username}
                 mail={visibleMails[key]}
-                onStartMail={onStartMail}
-                onCancelMail={onCancelMail}
-                onCompleteMail={onCompleteMail}
-                onDeleteMail={onDeleteMail}
+                mailsStart={mailsStart}
+                mailsCancel={mailsCancel}
+                mailsComplete={mailsComplete}
+                mailsDelete={mailsDelete}
               />
             );
           })
@@ -84,68 +93,35 @@ const MailsList = ({
   );
 }
 
-class MailsListContainer extends Component {
+MailsList.propTypes = {
+  username: PropTypes.string,
+  mails: PropTypes.object,
+  filterSocial: PropTypes.string,
+  filterCategory: PropTypes.string,
+  search: PropTypes.string,
+  mailsStart: PropTypes.func,
+  mailsCancel: PropTypes.func,
+  mailsComplete: PropTypes.func,
+  mailsDelete: PropTypes.func
+};
 
-  static propTypes = {
-    userName: PropTypes.string,
-    mails: PropTypes.object,
-    filter: PropTypes.string,
-    search: PropTypes.string,
-    category: PropTypes.string,
-    onStartMail: PropTypes.func,
-    onCancelMail: PropTypes.func,
-    onCompleteMail: PropTypes.func,
-    onDeleteMail: PropTypes.func
-  };
+const mapStateToProps = createStructuredSelector({
+  username: selectAuthUsername,
+  mails: selectMailsData,
+  fetching: selectMailsFetching,
+  filterSocial: selectMailsFilterSocial,
+  filterCategory: selectMailsFilterCategory,
+  search: selectMailsSearch
+});
 
-  render() {
-    const {
-      userName,
-      mails,
-      fetching,
-      filter,
-      search,
-      category,
-      onStartMail,
-      onCancelMail,
-      onCompleteMail,
-      onDeleteMail} = this.props;
-
-    return(
-      <MailsList
-        userName={userName}
-        mails={mails}
-        fetching={fetching}
-        filter={filter}
-        search={search}
-        category={category}
-        onStartMail={onStartMail}
-        onCancelMail={onCancelMail}
-        onCompleteMail={onCompleteMail}
-        onDeleteMail={onDeleteMail}
-      />
-    );
-  }
-
-}
-
-const mapStateToProps = ({
-  login:{userName},
-  mails:{data: mails, fetching,  filter, search, category}
-}) => {
-  return {userName, mails, fetching, filter, search, category};
-}
-
-const mapDispatchToProps = (dispatch, {apiService}) => {
-  return {
-    onStartMail: (id, userName, startTimestamp, mail) => dispatch(fetchStartMail(dispatch, apiService, id, userName, startTimestamp, mail)),
-    onCancelMail: (id, mail) => dispatch(fetchCancelMail(dispatch, apiService, id, mail)),
-    onCompleteMail: (id, screenshot, mail) => dispatch(fetchCompleteMail(dispatch, apiService, id, screenshot, mail)),
-    onDeleteMail: (id) => dispatch(fetchDeleteMail(dispatch, apiService, id))
-  }
-}
+const mapDispatchToProps = (dispatch, {apiService}) => ({
+  mailsStart: (id, username, startTimestamp, mail) => dispatch(mailsStart(dispatch, apiService, id, username, startTimestamp, mail)),
+  mailsCancel: (id, mail) => dispatch(mailsCancel(dispatch, apiService, id, mail)),
+  mailsComplete: (id, screenshot, mail) => dispatch(mailsComplete(dispatch, apiService, id, screenshot, mail)),
+  mailsDelete: (id) => dispatch(mailsDelete(dispatch, apiService, id))
+});
 
 export default compose(
   withApiService(),
   connect(mapStateToProps, mapDispatchToProps)
-)(MailsListContainer);
+)(MailsList);

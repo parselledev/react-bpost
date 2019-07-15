@@ -1,9 +1,14 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
-import compose from '../../../utils/compose';
-import {searchMails} from '../../../actions/mailsActions';
-import Input from '../../UI/Input/Input';
+import compose from 'Utils/compose';
+import {createStructuredSelector} from 'reselect';
+
+import {selectMailsSearch} from 'Redux/mails/mails.selectors';
+import {mailsSearch} from 'Redux/mails/mails.actions';
+
+import Input from 'Components/UI/Input/Input';
+import './MailsSearch.sass';
 
 const MailsSearch = ({search, onSearchChange}) => {
   return(
@@ -21,34 +26,29 @@ class MailsSearchContainer extends Component {
 
   static propTypes = {
     search: PropTypes.string,
-    searchMails: PropTypes.func
+    mailsSearch: PropTypes.func
   }
 
   onSearchChange = e => {
-    this.props.searchMails(e.target.value);
+    this.props.mailsSearch(e.target.value);
   }
 
   render() {
-
-    const {search} = this.props;
-
     return(
       <MailsSearch
-        search={search}
+        search={this.props.search}
         onSearchChange={this.onSearchChange}/>
     );
   }
 }
 
-const mapStateToProps = ({mails: {search}}) => {
-  return {search};
-}
+const mapStateToProps = createStructuredSelector({
+  search: selectMailsSearch
+});
 
-const mapDispatchToProps = dispatch => {
-  return {
-    searchMails: query => dispatch(searchMails(query))
-  }
-}
+const mapDispatchToProps = dispatch => ({
+  mailsSearch: query => dispatch(mailsSearch(query))
+});
 
 export default compose(
   connect(mapStateToProps, mapDispatchToProps)

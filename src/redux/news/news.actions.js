@@ -1,4 +1,4 @@
-import * as types from '../constants/actionTypes';
+import * as types from './news.types';
 
 export default fetchNews = (apiService, dispatch) => () => {
   dispatch(fetchNewsRequest);

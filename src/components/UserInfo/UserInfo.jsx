@@ -1,16 +1,16 @@
 import React, {Component} from 'react';
 import './UserInfo.sass';
 import PropTypes from 'prop-types'
-import compose from '../../utils/compose';
+import compose from 'Utils/compose';
 import {connect} from 'react-redux';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faUser} from '@fortawesome/free-solid-svg-icons';
 
-const UserInfo = ({userName}) => {
+const UserInfo = ({username}) => {
   return(
     <div className="mails__userInfo">
       <FontAwesomeIcon icon={faUser} className="userInfo__icon"/>
-      <p className="userInfo__title">{`ID: ${userName}`}</p>
+      <p className="userInfo__title">{`ID: ${username}`}</p>
     </div>
   );
 }
@@ -18,23 +18,23 @@ const UserInfo = ({userName}) => {
 class UserInfoContainer extends Component {
 
   static propTypes = {
-    userName: PropTypes.string
+    username: PropTypes.string
   };
 
   render() {
 
-    const {userName} = this.props;
+    const {username} = this.props;
 
     return(
       <UserInfo
-        userName={userName}
+        username={username}
       />
     )
   }
 }
 
-const mapStateToProps = ({login: {userName}}) => {
-  return {userName}
+const mapStateToProps = ({auth: {username}}) => {
+  return {username}
 }
 
 export default compose(

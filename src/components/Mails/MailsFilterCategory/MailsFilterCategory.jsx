@@ -1,15 +1,19 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
-import compose from '../../../utils/compose';
-import {categoryMails} from '../../../actions/mailsActions';
-import './MailsCategory.sass';
+import compose from 'Utils/compose';
+import {createStructuredSelector} from 'reselect';
 
-class MailsCategory extends Component {
+import {selectMailsFilterCategory} from 'Redux/mails/mails.selectors';
+import {mailsFilterCategory} from 'Redux/mails/mails.actions';
+
+import './MailsFilterCategory.sass';
+
+class MailsFilterCategory extends Component {
 
   static propTypes = {
     category: PropTypes.string,
-    categoryMails: PropTypes.func
+    mailsFilterCategory: PropTypes.func
   };
 
   state = {
@@ -18,7 +22,7 @@ class MailsCategory extends Component {
 
   handleCategoryChange = (query) => {
     this.setState({activeCategory: query});
-    this.props.categoryMails(query);
+    this.props.mailsFilterCategory(query);
   }
 
   render() {
@@ -32,14 +36,14 @@ class MailsCategory extends Component {
     };
 
     return(
-      <nav className="header__nav">
+      <nav className="mails__category">
         {
           Object.keys(categories).map(key => {
             const active = key == category;
             return(
               <button
                 key={key}
-                className={`nav__link ${active ? 'active' : ''}`}
+                className={`category__link ${active ? 'active' : ''}`}
                 onClick={() => this.handleCategoryChange(key)}>
                 {categories[key]}
               </button>
@@ -51,16 +55,14 @@ class MailsCategory extends Component {
   }
 }
 
-const mapStateToProps = ({mails:{category}}) => {
-  return {category}
-}
+const mapStateToProps = createStructuredSelector({
+  category: selectMailsFilterCategory
+});
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    categoryMails: query => dispatch(categoryMails(query))
-  }
-}
+const mapDispatchToProps = (dispatch) => ({
+  mailsFilterCategory: query => dispatch(mailsFilterCategory(query))
+})
 
 export default compose(
   connect(mapStateToProps, mapDispatchToProps)
-)(MailsCategory);
+)(MailsFilterCategory);

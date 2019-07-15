@@ -54,7 +54,7 @@ class Modal extends Component {
     const {title, content, children} = this.props;
 
     return(
-      <div>
+      <>
         <ModalBtn
           wrappedBtn={children}
           onClick={() => this.onModalToggle()}/>
@@ -76,7 +76,7 @@ class Modal extends Component {
             <div className="c-modal__content">{content}</div>
           </div>
         </div>
-      </div>
+      </>
     );
   }
 }

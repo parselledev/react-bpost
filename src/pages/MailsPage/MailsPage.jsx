@@ -1,34 +1,32 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
-import compose from '../../../utils/compose';
-import withApiService from '../../hoc/withApiService';
-import {fetchResetExecution ,fetchMails} from '../../../actions/mailsActions';
+import compose from 'Utils/compose';
+import withApiService from 'Components/hoc/withApiService';
+
+import {mailsGet} from 'Redux/mails/mails.actions';
+
 import './MailsPage.sass';
-import MailsHeader from '../../Mails/MailsHeader/MailsHeader';
-import MailsList from '../../Mails/MailsList/MailsList';
+import MailsHeader from 'Components/Mails/MailsHeader/MailsHeader';
+import MailsList from 'Components/Mails/MailsList/MailsList';
 
 class MailsPageContainer extends Component {
 
   static propTypes = {
-    fetchResetExecution: PropTypes.func.isRequired,
-    fetchMails: PropTypes.func.isRequired
+    mailsGet: PropTypes.func.isRequired
   };
 
-  fetchMailsTimer = setInterval(() => {
-    this.props.fetchMails();
-  },2000);
+  // mailsGetTimer = setInterval(() => {
+  //   this.props.mailsGet();
+  // },2000);
 
   componentDidMount() {
-    //Сбрасываем таймер у писем которые не сделали и выгружаем на сервер
-    // this.props.fetchResetExecution();
-
-    this.props.fetchMails();
+    this.props.mailsGet();
   }
 
-  componentWillUnmount() {
-    clearInterval(this.fetchMailsTimer);
-  }
+  // componentWillUnmount() {
+  //   clearInterval(this.mailsGetTimer);
+  // }
 
   render() {
     return(
@@ -42,8 +40,7 @@ class MailsPageContainer extends Component {
 
 const mapDispatchToProps = (dispatch, {apiService}) => {
   return {
-    fetchResetExecution: fetchResetExecution(dispatch, apiService),
-    fetchMails: fetchMails(dispatch, apiService)
+    mailsGet: mailsGet(dispatch, apiService)
   };
 }
 

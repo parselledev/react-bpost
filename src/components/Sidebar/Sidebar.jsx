@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {NavLink} from 'react-router-dom';
 import './Sidebar.sass';
-import logo from '../../assets/img/logo.png';
+import logo from 'Assets/img/logo.png';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {
   faEnvelopeOpen,
@@ -21,9 +21,6 @@ class Sidebar extends Component {
   }
 
   render() {
-
-    const {visible} = this.state;
-
     return(
       <div className="app__sidebar">
         <div className="sidebar__header">
@@ -35,7 +32,7 @@ class Sidebar extends Component {
           onClick={this.handleNavToggle}
         ></button>
   
-        <nav className={`sidebar__nav ${visible ? 'visible' : ''}`}>
+        <nav className={`sidebar__nav ${this.state.visible ? 'visible' : ''}`}>
           <NavLink to="/" className="nav__link" activeClassName="is-active" exact>
             <FontAwesomeIcon icon={faEnvelopeOpen} className="nav__icon"/>
             Список писем

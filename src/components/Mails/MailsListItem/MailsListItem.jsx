@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
-import Button from '../../UI/Button/Button';
-import Link from '../../UI/Link/Link';
+import Button from 'Components/UI/Button/Button';
+import Link from 'Components/UI/Link/Link';
 import './MailsListItem.sass';
-import Dropzone from '../../UI/Dropzone/Dropzone';
+import Dropzone from 'Components/UI/Dropzone/Dropzone';
 import {faExclamationTriangle} from '@fortawesome/free-solid-svg-icons';
-import Timer from '../../UI/Timer/Timer';
+import Timer from 'Components/UI/Timer/Timer';
 
 
 class MailsListItem extends Component {
@@ -16,8 +16,8 @@ class MailsListItem extends Component {
   }
 
   componentWillMount() {
-    const {mail:{inProgress,postman,startTimestamp}, userName} = this.props;
-    if(inProgress && (userName === postman)) {
+    const {mail:{inProgress,postman,startTimestamp}, username} = this.props;
+    if(inProgress && (username === postman)) {
       this.setState({postmanPartVisible: true})
     }
 
@@ -31,19 +31,19 @@ class MailsListItem extends Component {
   }
 
   handleStartMail = () => {
-    const {id, userName, mail} = this.props;
+    const {id, username, mail} = this.props;
     const startTimestamp = Date.now();
     this.setState({
       postmanPartVisible: true,
       timer: 300000,
     });
-    this.props.onStartMail(id, userName, startTimestamp, mail);
+    this.props.mailsStart(id, username, startTimestamp, mail);
   }
 
   handleCancelMail = () => {
     const {id, mail} = this.props;
     this.setState({postmanPartVisible: false});
-    this.props.onCancelMail(id, mail);
+    this.props.mailsCancel(id, mail);
   }
 
   hadleCompleteMail = (id, mail) => {
@@ -53,7 +53,7 @@ class MailsListItem extends Component {
       return
     }
     this.setState({timer: false});
-    this.props.onCompleteMail(id, screenshot[0], mail);
+    this.props.mailscomplete(id, screenshot[0], mail);
   }
 
   cropText = (text, maxLength) => {
@@ -63,9 +63,9 @@ class MailsListItem extends Component {
 
   render() {
     const {postmanPartVisible, timer} = this.state;
-    const {id, fetching, userName, mail, onDeleteMail} = this.props;
+    const {id, username, mail, mailsDelete} = this.props;
     const {completed, text, owner, social, inProgress, screenshot, target} = mail;
-    const isOwner = userName === owner;
+    const isOwner = username === owner;
 
     const textShort = this.cropText(text, 40);
 
@@ -98,7 +98,7 @@ class MailsListItem extends Component {
                       :
                       <OwnerActionButtons
                         inProgress={inProgress}
-                        onDeleteMail={onDeleteMail}
+                        mailsDelete={mailsDelete}
                         id={id}/>
                     }
                   </React.Fragment>
@@ -186,6 +186,11 @@ class MailsListItem extends Component {
 const UserActionButtons = ({inProgress, handleStartMail, handleCancelMail, reportIcon}) => {
   return(
     <React.Fragment>
+      <Button
+        className="item__reportBtn"
+        classMod="small--icon--grey"
+        icon={reportIcon}
+        title="Репорт"/>
       {
         !inProgress ?
           <Button
@@ -196,26 +201,21 @@ const UserActionButtons = ({inProgress, handleStartMail, handleCancelMail, repor
           :
           <Button
             className="item__startBtn"
-            classMod="small--warning"
+            classMod="medium--warning"
             text="Отказаться"
             onClick={() => handleCancelMail()}/>
       }
-      <Button
-        className="item__reportBtn"
-        classMod="small--icon--grey"
-        icon={reportIcon}
-        title="Репорт"/>
     </React.Fragment>
   );
 }
 
-const OwnerActionButtons = ({inProgress, onDeleteMail, id}) => {
+const OwnerActionButtons = ({inProgress, mailsDelete, id}) => {
   return(
     <Button
       className="item__deleteBtn"
       classMod="small--ghost--danger"
       text={`Удалить${inProgress ? ' (Выполняется)' : ''}`}
-      onClick={() => onDeleteMail(id)}
+      onClick={() => mailsDelete(id)}
       disabled={!inProgress ? false : true}/>
   );
 }

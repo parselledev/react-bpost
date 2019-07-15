@@ -1,44 +1,39 @@
 import {
-  RESET_EXECUTION,
-  FETCH_MAILS_REQUEST,
-  FETCH_MAILS_SUCCESS,
-  FETCH_MAILS_FAILURE,
-  ADD_MAIL,
-  START_MAIL,
-  CANCEL_MAIL,
-  COMPLETE_MAIL,
-  DELETE_MAIL,
-  SEARCH_MAILS,
-  FITLER_MAILS,
-  CATEGORY_MAILS
-} from '../constants/actionTypes';
+  MAILS_FETCH_REQUEST,
+  MAILS_FETCH_SUCCESS,
+  MAILS_FETCH_FAILURE,
+  MAILS_ADD,
+  MAILS_START,
+  MAILS_CANCEL,
+  MAILS_COMPLETE,
+  MAILS_DELETE,
+  MAILS_SEARCH,
+  MAILS_FILTER_SOCIAL,
+  MAILS_FILTER_CATEGORY
+} from './mails.types';
 
 const INITIAL_STATE = {
   data: {},
-  fetching: false,
-  filter: 'ALL',
+  filter: {
+    social: 'ALL',
+    category: 'ACTIVE'
+  },
   search: '',
-  category: 'ACTIVE',
+  fetching: false,
   err: null
 };
 
 const mailsReducer = (state = INITIAL_STATE, action) => {
   switch(action.type) {
-    case RESET_EXECUTION:
-      return {
-        ...state,
-        fetching: true,
-        err: null
-      }
 
-    case FETCH_MAILS_REQUEST:
+    case MAILS_FETCH_REQUEST:
       return {
         ...state,
         fetching: true,
         err: null
       };
 
-    case FETCH_MAILS_SUCCESS:
+    case MAILS_FETCH_SUCCESS:
       return {
         ...state,
         data: action.payload,
@@ -46,28 +41,23 @@ const mailsReducer = (state = INITIAL_STATE, action) => {
         err: null
       };
 
-    case FETCH_MAILS_FAILURE:
+    case MAILS_FETCH_FAILURE:
       return {
         ...state,
         fetching: false,
         err: action.payload
       };
     
-    case ADD_MAIL:
+    case MAILS_ADD:
       return {
         ...state,
         data: {
           ...state.data,
-          ...action.mail
+          ...action.payload
         }
-        // ...state,
-        // data: [
-        //   ...state.data,
-        //   {...action.payload}
-        // ]
       };
 
-    case START_MAIL:
+    case MAILS_START:
       return {
         ...state,
         data: {
@@ -81,13 +71,13 @@ const mailsReducer = (state = INITIAL_STATE, action) => {
         }
       };
     
-    case CANCEL_MAIL:
+    case MAILS_CANCEL:
       return {
         ...state,
         data: {
           ...state.data,
-          [action.id]: {
-            ...state.data[action.id],
+          [action.payload]: {
+            ...state.data[action.payload],
             completed: false,
             inProgress: false,
             postman: "",
@@ -97,7 +87,7 @@ const mailsReducer = (state = INITIAL_STATE, action) => {
         }
       }
 
-    case COMPLETE_MAIL:
+    case MAILS_COMPLETE:
       return {
         ...state,
         data: {
@@ -111,31 +101,37 @@ const mailsReducer = (state = INITIAL_STATE, action) => {
         }
       }
 
-    case DELETE_MAIL:
+    case MAILS_DELETE:
       return {
         ...state,
         data: {
           ...state.data,
-          [action.id]: null
+          [action.payload]: null
         }
       }
 
-    case SEARCH_MAILS:
+    case MAILS_SEARCH:
       return {
         ...state,
         search: action.payload
       }
 
-    case FITLER_MAILS:
+    case MAILS_FILTER_SOCIAL:
       return {
         ...state,
-        filter: action.payload
+        filter: {
+          ...state.filter,
+          social: action.payload
+        }
       }
 
-    case CATEGORY_MAILS:
+    case MAILS_FILTER_CATEGORY:
       return {
         ...state,
-        category: action.payload
+        filter: {
+          ...state.category,
+          category: action.payload
+        }
       }
 
     default:

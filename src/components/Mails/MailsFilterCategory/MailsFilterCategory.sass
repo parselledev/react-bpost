@@ -1,0 +1,30 @@
+.mails__category
+  display: grid
+  grid-template-columns: auto auto auto
+  grid-gap: 6px
+  align-items: center
+  justify-content: start
+  justify-items: center
+  width: 100%
+  // margin-bottom: -1px
+
+  .category__link
+    border: none
+    background: transparent
+    // padding: 13px 10px
+    padding: 6px 10px
+    color: $color-grey-dark
+    outline: none
+    transition: all 0.2s
+    // border-bottom: 2px solid transparent
+    border-radius: 5px
+
+    &:hover
+      // border-color: $color-grey
+      background: $color-grey-thin
+
+    &.active
+      // border-color: $color-blue
+      // color: $color-dark
+      background: $color-blue
+      color: white

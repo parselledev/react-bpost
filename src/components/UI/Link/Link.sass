@@ -1,15 +1,13 @@
 .c-link
   text-decoration: none
   padding: 5px 8px
-  border: 1px dashed
+  border: 1px solid
   transition: all 0.3s
   border-radius: 5px
   text-align: center
-  +on-event()
-    border-style: solid
 
   +mod('--blue')
     color: $color-blue
     border-color: $color-blue
     +on-event()
-      background: rgba($color-blue, 0.1)
+      background: rgba($color-blue, 0.2)

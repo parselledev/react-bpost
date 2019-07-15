@@ -27,7 +27,12 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.jsx'],
     alias: {
-      Assets: path.resolve(__dirname, 'src/assets/')
+      Assets: path.resolve(__dirname, 'src/assets/'),
+      Styles: path.resolve(__dirname, 'src/styles/'),
+      Redux: path.resolve(__dirname, 'src/redux/'),
+      Pages: path.resolve(__dirname, 'src/pages/'),
+      Components: path.resolve(__dirname, 'src/components/'),
+      Utils: path.resolve(__dirname, 'src/utils/'),
     }
   },
   module: {
@@ -37,16 +42,7 @@ module.exports = {
         exclude: /node_modules/,
         use: [
           {
-            loader: "babel-loader",
-            options: {
-              presets: [
-                "@babel/preset-env",
-                "@babel/preset-react"
-              ],
-              plugins: [
-                "@babel/plugin-proposal-class-properties"
-              ]
-            }
+            loader: "babel-loader"
           }
         ]
       },

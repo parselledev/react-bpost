@@ -11,12 +11,11 @@ class ErrorBoundry extends Component {
   }
 
   render() {
-    const {hasError} = this.state;
-
     return(
-      hasError ? <p>Error</p> : this.props.children
+      this.state.hasError ? <p>Error</p> : this.props.children
     );
   }
+
 }
 
 export default ErrorBoundry;
