@@ -3,21 +3,22 @@ import PropTypes from 'prop-types'
 import compose from 'Utils/compose';
 import {connect} from 'react-redux';
 import withApiService from 'Components/hoc/withApiService';
-import {authSignIn, authSignUp} from 'Redux/auth/auth.actions';
+import {createStructuredSelector} from 'reselect';
+
+import {selectAuthUsername} from 'Redux/auth/auth.selectors';
+import {authSignUp} from 'Redux/auth/auth.actions';
 
 class Auth extends Component {
 
   static propTypes = {
-    authSignIn: PropTypes.func,
+    username: PropTypes.string,
     authSignUp: PropTypes.func
   };
 
   componentWillMount() {
-    const lsUserName = localStorage.getItem('userName');
-    lsUserName ?
-      this.props.authSignIn(lsUserName)
-      :
-      this.props.authSignUp();
+    const {username, authSignIn, authSignUp} = this.props;
+
+    if(!username) authSignUp();
   }
 
   render() {
@@ -28,12 +29,15 @@ class Auth extends Component {
 
 }
 
+const mapStateToProps = createStructuredSelector({
+  username: selectAuthUsername
+});
+
 const mapDispatchToProps = (dispatch, {apiService}) => ({
-  authSignIn: userName => dispatch(authSignIn(userName)),
   authSignUp: () => dispatch(authSignUp(dispatch, apiService))
 });
 
 export default compose(
   withApiService(),
-  connect(null, mapDispatchToProps)
+  connect(mapStateToProps, mapDispatchToProps)
 )(Auth);

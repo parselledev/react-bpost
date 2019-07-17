@@ -1,43 +1,11 @@
 import * as types from './mails.types';
 
-// export const fetchResetExecution = (dispatch, apiService) => () => {
-//   dispatch(resetExecution());
-//   dispatch(fetchMailsRequest());
-//   apiService.getMails()
-//     .then(data => {
-//       const mails = {...data};
-
-//       Object.keys(mails).map(key => {
-//         const mail = mails[key];
-//         if (
-//           mail.startTimestamp.length == 0 ||
-//           Math.floor(new Date() / 1000) - mail.startTimestamp > 10
-//           ) {
-//           mails[key] = {
-//             ...mail,
-//             inProgress: false,
-//             postman: "",
-//             startTimestamp: ""
-//           };
-//         }
-//       });
-
-//       apiService.putMails(mails)
-//         .catch(err => dispatch(fetchMailsFailure(err)));
-//     })
-//     .catch(err => dispatch(fetchMailsFailure(err)));
-// }
-// const resetExecution = () => ({
-//   type: types.RESET_EXECUTION
-// });
-
 const mailsFetchRequest = () => ({
   type: types.MAILS_FETCH_REQUEST
 });
 
-const mailsFetchSuccess = data => ({
+const mailsFetchSuccess = () => ({
   type: types.MAILS_FETCH_SUCCESS,
-  payload: data
 });
 
 const mailsFetchFailure = err => ({
@@ -45,39 +13,91 @@ const mailsFetchFailure = err => ({
   payload: err
 });
 
+export const mailsResetNonCompleted = (dispatch, apiService, mails) => () => {
+  if(!mails) return;
+
+  dispatch({
+    type: types.MAILS_RESET_NON_COMPLETED,
+  });
+
+  Object.keys(mails).map(key => {
+    const mail = mails[key];
+    if (
+      mail.inProgress &&
+      mail.startTimestamp.length != 0 &&
+      Date.now() - mail.startTimestamp > 300000
+    ) {
+
+      dispatch(mailsCancel(dispatch, apiService, key));
+
+    }
+  });
+}
+
+export const mailsDeleteOld = (dispatch, apiService, mails) => () => {
+  if(!mails) return;
+
+  dispatch({
+    type: types.MAILS_DELETE_OLD
+  });
+
+  Object.keys(mails).map(key => {
+    const mail = mails[key];
+    if(
+      mail.completed &&
+      Date.now() - mail.endTimestamp > 1.8e+7
+    ) {
+
+      dispatch(mailsDelete(dispatch, apiService, key, mail.screenshotName))
+
+    }
+  });
+}
+
 export const mailsGet = (dispatch, apiService) => () => {
   dispatch(mailsFetchRequest());
   apiService.getMails()
-    .then(data => dispatch(mailsFetchSuccess(data)))
+    .then(data => {
+      dispatch(mailsFetchSuccess())
+      dispatch({
+        type: types.MAILS_GET,
+        payload: data
+      })
+    })
     .catch(err => dispatch(mailsFetchFailure(err)));
 }
 
 export const mailsAdd = (dispatch, apiService, username, social, target, text) => () => {
   const mail = {
     completed: false,
+    endTimestamp: '',
     inProgress: false,
     owner: username,
     postman: '',
     screenshot: '',
+    screenshotName: '',
     social,
     startTimestamp: '',
     target,
     text
   };
 
-  dispatch(fetchMailsRequest());
+  dispatch(mailsFetchRequest());
   
   apiService.addMail(mail)
-    .then(key => dispatch({
-      type: types.MAILS_ADD,
-      payload: {
-        [key]: {...mail}
-      }
-    }))
-    .catch(err => fetchMailsFailure(err))
+    .then(key => {
+      dispatch(mailsFetchSuccess());
+      dispatch({
+        type: types.MAILS_ADD,
+        payload: {
+          [key]: {...mail}
+        }
+      })
+    })
+    .catch(err => mailsFetchFailure(err))
 }
 
-export const mailsStart = (dispatch, apiService, id, userName, startTimestamp, mail) => () => {
+export const mailsStart = (dispatch, apiService, id, userName, startTimestamp) => () => {
   dispatch({
     type: types.MAILS_START,
     id,
@@ -87,11 +107,12 @@ export const mailsStart = (dispatch, apiService, id, userName, startTimestamp, m
 
   dispatch(mailsFetchRequest());
   
-  apiService.updateMail(id, {...mail, inProgress: true, postman: userName, startTimestamp: startTimestamp})
+  apiService.updateMail(id, {inProgress: true, postman: userName, startTimestamp: startTimestamp})
+    .then(() => dispatch(mailsFetchSuccess()))
     .catch(err => mailsFetchFailure(err));
 }
 
-export const mailsCancel = (dispatch, apiService, id, mail) => () => {
+export const mailsCancel = (dispatch, apiService, id) => () => {
   dispatch({
     type: types.MAILS_CANCEL,
     payload: id
@@ -100,41 +121,59 @@ export const mailsCancel = (dispatch, apiService, id, mail) => () => {
   dispatch(mailsFetchRequest());
 
   apiService.updateMail(id, {
-    ...mail,
+    endTimestamp: "",
     completed: false,
     inProgress: false,
     postman: "",
     screenshot: "",
+    screenshotName: "",
     startTimestamp: ""})
+    .then(() => dispatch(mailsFetchSuccess()))
     .catch(err => mailsfetchFailure(err));
 }
 
-export const mailsComplete = (dispatch, apiService, id, screenshot, mail) => () => {
+export const mailsComplete = (dispatch, apiService, id, screenshot, endTimestamp) => () => {
   dispatch(mailsFetchRequest());
 
-  apiService.uploadFile('screenshots', screenshot)
+  apiService.uploadFile('screenshots', screenshot, endTimestamp)
     .then(url => {
       dispatch({
         type: types.MAILS_COMPLETE,
         id,
-        screenshot
+        endTimestamp: endTimestamp,
+        screenshot: url,
+        screenshotName: endTimestamp,
       })
-      apiService.updateMail(id, {...mail, completed: true, inProgress: false, screenshot: url})
+      apiService.updateMail(id, {
+        endTimestamp: endTimestamp,
+        completed: true,
+        inProgress: false,
+        screenshot: url,
+        screenshotName: endTimestamp})
+        .then(() => dispatch(mailsFetchSuccess()))
         .catch(err => mailsFetchFailure(err));
     })
+    .then(() => dispatch(mailsFetchSuccess()))
     .catch(err => mailsFetchFailure(err));
 }
 
-export const mailsDelete = (dispatch, apiService, id) => () => {
+export const mailsDelete = (dispatch, apiService, id, screenshotName='') => () => {
   dispatch({
     type: types.MAILS_DELETE,
-    patload: id
+    payload: id
   });
 
   dispatch(mailsFetchRequest());
 
   apiService.deleteMail(id)
+    .then(() => dispatch(mailsFetchSuccess()))
     .catch(err => mailsFetchFailure(err));
+
+  if(screenshotName) {
+    apiService.deleteFile('screenshots', screenshotName)
+      .then(() => dispatch(mailsFetchSuccess()))
+      .catch(err => mailsFetchFailure(err));
+  }
 }
 
 export const mailsSearch = query => ({

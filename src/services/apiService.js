@@ -39,9 +39,9 @@ export default class ApiService {
     await mailsRef.set({...mails});
   }
 
-  updateMail = async (id, mail) => {
+  updateMail = async (id, data) => {
     const mailRef = await this.db.ref(`mails/data/${id}`);
-    await mailRef.set({...mail});
+    await mailRef.update({...data});
   }
 
   addMail = async(mail) => {
@@ -54,10 +54,15 @@ export default class ApiService {
       .catch(err => {throw new Error('Ошибка удаления письма')});
   }
 
-  uploadFile = async(dir, file) => {
-    const newImgRef = await this.storage.ref().child(`${dir}/${file.name}`).put(file)
+  uploadFile = async(dir, file, fileName) => {
+    const fileRef = await this.storage.ref().child(`${dir}/${fileName}`).put(file)
       .then(snapshot => snapshot.ref.getDownloadURL())
-    return newImgRef;
+    return fileRef;
+  }
+
+  deleteFile = async(dir, fileName) => {
+    const fileRef = await this.storage.ref().child(`${dir}/${fileName}`);
+    fileRef.delete();
   }
 
 }

@@ -2,6 +2,8 @@ import {
   MAILS_FETCH_REQUEST,
   MAILS_FETCH_SUCCESS,
   MAILS_FETCH_FAILURE,
+  MAILS_GET,
+  MAILS_RESET_NON_COMPLETED,
   MAILS_ADD,
   MAILS_START,
   MAILS_CANCEL,
@@ -11,6 +13,8 @@ import {
   MAILS_FILTER_SOCIAL,
   MAILS_FILTER_CATEGORY
 } from './mails.types';
+
+import { mailsDelete } from './mails.utils';
 
 const INITIAL_STATE = {
   data: {},
@@ -36,7 +40,6 @@ const mailsReducer = (state = INITIAL_STATE, action) => {
     case MAILS_FETCH_SUCCESS:
       return {
         ...state,
-        data: action.payload,
         fetching: false,
         err: null
       };
@@ -47,6 +50,17 @@ const mailsReducer = (state = INITIAL_STATE, action) => {
         fetching: false,
         err: action.payload
       };
+
+    case MAILS_GET:
+      return {
+        ...state,
+        data: {...action.payload}
+      }
+
+    case MAILS_RESET_NON_COMPLETED:
+      return {
+        ...state
+      }
     
     case MAILS_ADD:
       return {
@@ -94,9 +108,11 @@ const mailsReducer = (state = INITIAL_STATE, action) => {
           ...state.data,
           [action.id]: {
             ...state.data[action.id],
+            endTimestamp: action.endTimestamp,
             completed: true,
             inProgress: false,
-            screenshot: action.screenshot
+            screenshot: action.screenshot,
+            screenshotName: action.screenshotName
           }
         }
       }
@@ -104,10 +120,7 @@ const mailsReducer = (state = INITIAL_STATE, action) => {
     case MAILS_DELETE:
       return {
         ...state,
-        data: {
-          ...state.data,
-          [action.payload]: null
-        }
+        data: mailsDelete(state.data, action.payload)
       }
 
     case MAILS_SEARCH:
@@ -129,7 +142,7 @@ const mailsReducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         filter: {
-          ...state.category,
+          ...state.filter,
           category: action.payload
         }
       }

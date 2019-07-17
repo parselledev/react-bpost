@@ -5,14 +5,16 @@ import './MailsListItem.sass';
 import Dropzone from 'Components/UI/Dropzone/Dropzone';
 import {faExclamationTriangle} from '@fortawesome/free-solid-svg-icons';
 import Timer from 'Components/UI/Timer/Timer';
+import ReCaptcha from 'Components/ReCaptcha/ReCaptcha';
 
 
 class MailsListItem extends Component {
 
   state = {
-    screenshot: [],
+    screenshot: {},
     postmanPartVisible: false,
-    timer: 0
+    timer: 0,
+    recaptcha: ""
   }
 
   componentWillMount() {
@@ -27,17 +29,17 @@ class MailsListItem extends Component {
   }
 
   handleScreenshotRecieve = (files) => {
-    this.setState({screenshot: [files[0]]});
+    this.setState({screenshot: files[0] });
   }
 
   handleStartMail = () => {
-    const {id, username, mail} = this.props;
+    const {id, username} = this.props;
     const startTimestamp = Date.now();
     this.setState({
       postmanPartVisible: true,
       timer: 300000,
     });
-    this.props.mailsStart(id, username, startTimestamp, mail);
+    this.props.mailsStart(id, username, startTimestamp);
   }
 
   handleCancelMail = () => {
@@ -46,14 +48,26 @@ class MailsListItem extends Component {
     this.props.mailsCancel(id, mail);
   }
 
-  hadleCompleteMail = (id, mail) => {
-    const {screenshot} = this.state;
+  hadleCompleteMail = (id) => {
+    const {screenshot, recaptcha} = this.state;
+
     if(screenshot.length == 0) {
       alert('Для завершения загрузите скриншот диалога с адресоатом письма!')
       return
     }
+
+    if(!recaptcha) {
+      alert('Подтвердите капчу!');
+      return
+    }
+
     this.setState({timer: false});
-    this.props.mailscomplete(id, screenshot[0], mail);
+    const endTimestamp = Date.now().toString();
+    this.props.mailsComplete(id, screenshot, endTimestamp);
+  }
+
+  handleCaptchaComplete = response => {
+    this.setState({recaptcha: response});
   }
 
   cropText = (text, maxLength) => {
@@ -115,7 +129,7 @@ class MailsListItem extends Component {
                       <Button
                         className="item__startBtn"
                         classMod="small--warning"
-                        text="Вернуть на исполнение"
+                        text="Вернуть"
                         onClick={this.handleCancelMail}/>
                       :
                       ''
@@ -149,6 +163,11 @@ class MailsListItem extends Component {
                 accept="image/*"
                 text="Загрузите скриншот переписки"
                 recieveFiles={this.handleScreenshotRecieve}/>
+            </div>
+
+            <div className="item__recaptcha">
+              <ReCaptcha
+                onChange={(response) => this.handleCaptchaComplete(response)}/>
             </div>
 
             <div className="item__complete">
@@ -186,11 +205,11 @@ class MailsListItem extends Component {
 const UserActionButtons = ({inProgress, handleStartMail, handleCancelMail, reportIcon}) => {
   return(
     <React.Fragment>
-      <Button
+      {/* <Button
         className="item__reportBtn"
         classMod="small--icon--grey"
         icon={reportIcon}
-        title="Репорт"/>
+        title="Репорт"/> */}
       {
         !inProgress ?
           <Button
@@ -201,7 +220,7 @@ const UserActionButtons = ({inProgress, handleStartMail, handleCancelMail, repor
           :
           <Button
             className="item__startBtn"
-            classMod="medium--warning"
+            classMod="small--warning"
             text="Отказаться"
             onClick={() => handleCancelMail()}/>
       }
@@ -214,7 +233,7 @@ const OwnerActionButtons = ({inProgress, mailsDelete, id}) => {
     <Button
       className="item__deleteBtn"
       classMod="small--ghost--danger"
-      text={`Удалить${inProgress ? ' (Выполняется)' : ''}`}
+      text={inProgress ? 'Выполняется' : 'Удалить'}
       onClick={() => mailsDelete(id)}
       disabled={!inProgress ? false : true}/>
   );

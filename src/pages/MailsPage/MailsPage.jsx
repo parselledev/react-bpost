@@ -3,8 +3,10 @@ import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import compose from 'Utils/compose';
 import withApiService from 'Components/hoc/withApiService';
+import {createStructuredSelector} from 'reselect';
 
-import {mailsGet} from 'Redux/mails/mails.actions';
+import {selectMailsData} from 'Redux/mails/mails.selectors';
+import {mailsGet, mailsResetNonCompleted, mailsDeleteOld} from 'Redux/mails/mails.actions';
 
 import './MailsPage.sass';
 import MailsHeader from 'Components/Mails/MailsHeader/MailsHeader';
@@ -13,20 +15,24 @@ import MailsList from 'Components/Mails/MailsList/MailsList';
 class MailsPageContainer extends Component {
 
   static propTypes = {
-    mailsGet: PropTypes.func.isRequired
+    mails: PropTypes.object,
+    mailsGet: PropTypes.func.isRequired,
+    mailsResetNonCompleted: PropTypes.func.isRequired
   };
 
-  // mailsGetTimer = setInterval(() => {
-  //   this.props.mailsGet();
-  // },2000);
+  mailsGetTimer = setInterval(() => {
+    this.props.mailsGet();
+    this.props.mailsResetNonCompleted(this.props.mails);
+    this.props.mailsDeleteOld(this.props.mails);
+  },3000);
 
   componentDidMount() {
     this.props.mailsGet();
   }
 
-  // componentWillUnmount() {
-  //   clearInterval(this.mailsGetTimer);
-  // }
+  componentWillUnmount() {
+    clearInterval(this.mailsGetTimer);
+  }
 
   render() {
     return(
@@ -38,13 +44,17 @@ class MailsPageContainer extends Component {
   }
 }
 
-const mapDispatchToProps = (dispatch, {apiService}) => {
-  return {
-    mailsGet: mailsGet(dispatch, apiService)
-  };
-}
+const mapStateToProps = createStructuredSelector({
+  mails: selectMailsData
+});
+
+const mapDispatchToProps = (dispatch, {apiService}) => ({
+  mailsGet: mailsGet(dispatch, apiService),
+  mailsResetNonCompleted: mails => dispatch(mailsResetNonCompleted(dispatch, apiService, mails)),
+  mailsDeleteOld: mails => dispatch(mailsDeleteOld(dispatch, apiService, mails))
+})
 
 export default compose(
   withApiService(),
-  connect(null, mapDispatchToProps)
+  connect(mapStateToProps, mapDispatchToProps)
 )(MailsPageContainer);

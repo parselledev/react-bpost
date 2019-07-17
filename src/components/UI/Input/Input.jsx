@@ -1,4 +1,5 @@
 import React from 'react';
+import ReCaptcha from 'Components/ReCaptcha/ReCaptcha';
 import './Input.sass';
 
 const Input = ({className='',...props}) => {
@@ -20,6 +21,18 @@ const InputFormField = ({field, form:{errors, touched},...props}) => {
         className='c-input'
         {...field}
         {...props}/>
+    </div>
+  );
+}
+
+const InputFormReCaptcha = ({field, form:{errors, touched},...props}) => {
+  return(
+    <div className='c-input__wrap'>
+      {touched[field.name] &&
+        errors[field.name] && <div className="c-input__error">{errors[field.name]}</div>}
+      <ReCaptcha
+        onChange={(response) => props.setFieldValue("recaptcha", response)}
+      />
     </div>
   );
 }
@@ -50,7 +63,7 @@ const InputTextarea = ({...props}) => {
 
 const InputFormSelect = ({field, form:{touched, errors}, children, ...props}) => {
   return(
-    <div className='c-input__wrap--select'>
+    <div className='c-input__wrap c-input__wrap--select'>
       <select
         className='c-input c-input--select'
         {...field}
@@ -64,6 +77,7 @@ const InputFormSelect = ({field, form:{touched, errors}, children, ...props}) =>
 }
 
 Input.FormField = InputFormField;
+Input.FormReCaptcha = InputFormReCaptcha;
 Input.FormTextarea = InputFormTextarea;
 Input.Textarea = InputTextarea;
 Input.FormSelect = InputFormSelect;

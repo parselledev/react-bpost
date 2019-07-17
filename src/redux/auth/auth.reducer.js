@@ -1,5 +1,4 @@
 import {
-  AUTH_SIGN_IN,
   AUTH_SIGN_UP,
   AUTH_FETCH_REQUEST,
   AUTH_FETCH_FAILURE
@@ -13,12 +12,6 @@ const INITIAL_STATE = {
 
 const loginReducer = (state = INITIAL_STATE, action)  => {
   switch(action.type) {
-
-    case AUTH_SIGN_IN:
-      return {
-        ...state,
-        username: action.payload
-      }
 
     case AUTH_SIGN_UP:
       return {

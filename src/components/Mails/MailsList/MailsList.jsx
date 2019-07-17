@@ -18,6 +18,7 @@ import {mailsStart, mailsCancel, mailsComplete, mailsDelete} from 'Redux/mails/m
 import './MailsList.sass';
 import MailsListItem from 'Components/Mails/MailsListItem/MailsListItem';
 import Spin from 'Components/UI/Spin/Spin';
+import Empty from 'Components/UI/Empty/Empty';
 
 const MailsList = ({
   username,
@@ -32,7 +33,7 @@ const MailsList = ({
   mailsDelete
 }) => {
 
-  if(mails == null || (!fetching && Object.keys(mails).length == 0)) return <p>Писем нет</p>
+  if(mails == null || (!fetching && Object.keys(mails).length == 0)) return <Empty text="Новые письма появятся автоматически"/>
   if(fetching && Object.keys(mails).length == 0) return <Spin />
 
   const processMails = (mails, filterSocial, filterCategory, search) => {
@@ -47,7 +48,7 @@ const MailsList = ({
           isCategory = !mail.completed && (username == mail.postman || !mail.postman);
           break;
         case 'MINE':
-          isCategory = username == mail.postman || username == mail.owner;
+          isCategory = (username == mail.postman && !mail.completed) || username == mail.owner;
           break;
         case 'COMPLETED':
           isCategory = mail.completed == true;
@@ -89,7 +90,7 @@ const MailsList = ({
         }
       </ul>
     :
-    <p>Нет подходящих результатов</p>
+    <Empty text="Попробуйте изменить категорию или фильтр"/>
   );
 }
 
@@ -115,10 +116,10 @@ const mapStateToProps = createStructuredSelector({
 });
 
 const mapDispatchToProps = (dispatch, {apiService}) => ({
-  mailsStart: (id, username, startTimestamp, mail) => dispatch(mailsStart(dispatch, apiService, id, username, startTimestamp, mail)),
-  mailsCancel: (id, mail) => dispatch(mailsCancel(dispatch, apiService, id, mail)),
-  mailsComplete: (id, screenshot, mail) => dispatch(mailsComplete(dispatch, apiService, id, screenshot, mail)),
-  mailsDelete: (id) => dispatch(mailsDelete(dispatch, apiService, id))
+  mailsStart: (id, username, startTimestamp) => dispatch(mailsStart(dispatch, apiService, id, username, startTimestamp)),
+  mailsCancel: id => dispatch(mailsCancel(dispatch, apiService, id)),
+  mailsComplete: (id, screenshot, endTimestamp) => dispatch(mailsComplete(dispatch, apiService, id, screenshot, endTimestamp)),
+  mailsDelete: id => dispatch(mailsDelete(dispatch, apiService, id))
 });
 
 export default compose(

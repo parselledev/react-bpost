@@ -22,7 +22,7 @@
 		grid-gap: 5px
 		justify-items: start
 		align-items: center
-		padding: 8px 10px
+		padding: 5px 7px
 
 	&__social
 		display: grid
@@ -36,7 +36,6 @@
 			background: url('~Assets/img/tg-icon.png') center no-repeat
 
 	&__text
-		font-weight: 500
 		padding-left: 2px
 
 	&__actions
@@ -70,6 +69,10 @@
 		grid-gap: 5px
 		justify-items: stretch
 
+	&__recaptcha
+		display: grid
+		justify-self: end
+
 	&__completeBtn
 		justify-self: end
 		width: auto
@@ -82,7 +85,12 @@
 		justify-self: end
 		width: auto
 
-	&__deleteBtn
+	&__deleteBtn,
+	&__screenshotLink
 		grid-column: -1
+
+	&__startBtn
+		grid-column: -2
+		grid-row: 1
 
 	

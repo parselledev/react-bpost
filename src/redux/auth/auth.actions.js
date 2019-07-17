@@ -1,19 +1,12 @@
 import * as types from './auth.types';
 
-export const authSignIn = userName => ({
-  type: types.AUTH_SIGN_IN,
-  payload: userName
-});
-
 export const authSignUp = (dispatch, apiService) => () => {
   dispatch(authFetchRequest());
 
   apiService.getResource('users/count')
     .then(data => {
       const newUsersCount = data + 1;
-      const username = newUsersCount;
-
-      localStorage.setItem('username', username);
+      const username = newUsersCount.toString();
 
       dispatch({
         type: types.AUTH_SIGN_UP,

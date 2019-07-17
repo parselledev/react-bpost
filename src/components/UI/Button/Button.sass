@@ -5,7 +5,6 @@
   cursor: pointer
   outline: none
   transition: 0.15s
-  border: none
   
   // *
   //   font-weight: 500
@@ -20,7 +19,7 @@
     min-height: 28px
     padding: 6px 8px
     border-radius: 5px
-    border: none
+    border: 1px solid transparent
     font-size: 14px
 
   +mod('--small')
@@ -29,7 +28,7 @@
     min-height: 25px
     padding: 5px 8px
     border-radius: 5px
-    border: none
+    border: 1px solid transparent
 
   //Type
   +mod('--ghost')
@@ -69,6 +68,7 @@
 
     +mod('--ghost')
       color: $color-blue
+      border-color: rgba($color-blue, 0.3)
       +on-event
         background: $color-blue !important
         color: white
@@ -94,6 +94,7 @@
 
     +mod('--ghost')
       color: $color-danger
+      border-color: rgba($color-danger, 0.3)
       +on-event
         background: $color-danger !important
         color: white

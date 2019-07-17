@@ -11,8 +11,6 @@
   padding-top: 40px
   background: rgba(0, 0, 0, 0.6)
   overflow: hidden
-  visibility: hidden
-  opacity: 0
   z-index: 100
   
   &.visible
@@ -22,15 +20,23 @@
 
   &__wrap
     background: white
-    border: 1px solid $color-grey-thin
     border-radius: 5px
     box-shadow: $shadow-main
     transition: none
     overflow: hidden
 
-
   &__close
+    display: grid
+    align-items: center
+    justify-items: center
+    padding: 12px
     cursor: pointer
+
+    +on-event
+      background: rgba($color-danger, 0.2)
+
+  &__closeIcon
+    pointer-events: none
     color: $color-danger
     font-size: 14px
 
@@ -39,18 +45,20 @@
 
   &__header
     display: grid
-    grid-template-columns: auto 10px
+    grid-template-columns: auto auto
     justify-content: space-between
     align-content: center
     align-items: center
     grid-gap: 10px
     width: 100%
-    padding: 10px 15px
+    padding-left: 15px
     border-bottom: 1px solid $color-grey-thin
+    background: $color-grey-light
 
   &__title
     font-size: 16px
     font-weight: 500
+    color: $color-grey-dark
 
   &__content
     margin: 10px 0

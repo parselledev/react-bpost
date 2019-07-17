@@ -11,9 +11,11 @@ const MailsHeader = () => {
   return(
     <div className="mails__header">
       <MailsFilterCategory />
-      <MailsSearch />
-      <MailsFilterSocial />
-      <MailsAdd />
+      <div className="header__tools">
+        <MailsSearch />
+        <MailsFilterSocial />
+        <MailsAdd />
+      </div>
     </div>
   );
 

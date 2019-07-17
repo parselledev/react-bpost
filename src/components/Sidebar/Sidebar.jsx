@@ -4,57 +4,79 @@ import './Sidebar.sass';
 import logo from 'Assets/img/logo.png';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {
-  faEnvelopeOpen,
-  faNewspaper,
-  faClipboardList,
-  faAddressBook
+	faBars,
+	faEnvelopeOpen,
+	faClipboardList,
+	faAddressBook
 } from '@fortawesome/free-solid-svg-icons';
 
 class Sidebar extends Component {
 
-  state = {
-    visible: false
-  };
+	state = {
+		visible: false
+	};
 
-  handleNavToggle = () => {
-    this.setState({visible: !this.state.visible});
-  }
+	handleNavToggle = () => {
+		this.setState({visible: !this.state.visible});
+	}
 
-  render() {
-    return(
-      <div className="app__sidebar">
-        <div className="sidebar__header">
-          <img src={logo} alt="Логотип Добро почта" className="sidebar__logo"/>
-        </div>
-  
-        <button
-          className="sidebar__navBtn"
-          onClick={this.handleNavToggle}
-        ></button>
-  
-        <nav className={`sidebar__nav ${this.state.visible ? 'visible' : ''}`}>
-          <NavLink to="/" className="nav__link" activeClassName="is-active" exact>
-            <FontAwesomeIcon icon={faEnvelopeOpen} className="nav__icon"/>
-            Список писем
-          </NavLink>
-          {/* <div className="nav__line"></div> */}
-          {/* <NavLink to="/news" className="nav__link" activeClassName="is-active" exact>
-            <FontAwesomeIcon icon={faNewspaper} className="nav__icon"/>
-            Новости
-          </NavLink> */}
-          <NavLink to="/rules" className="nav__link" activeClassName="is-active" exact>
-            <FontAwesomeIcon icon={faClipboardList} className="nav__icon"/>
-            Правила
-          </NavLink>
-          <NavLink to="/contacts" className="nav__link" activeClassName="is-active" exact>
-            <FontAwesomeIcon icon={faAddressBook} className="nav__icon"/>
-            Контакты
-          </NavLink>
-          {/* <NavLink to="/donate" className="nav__link" activeClassName="is-active" exact>Пожертования</NavLink> */}
-        </nav>
-      </div>
-    );
-  }
+	render() {
+
+		const navLinks = [
+			{
+				to: "/",
+				icon: faEnvelopeOpen,
+				title: "Список писем",
+				exact: true
+			},
+			{
+				to: "/rules",
+				icon: faClipboardList,
+				title: "Правила",
+				exact: true
+			},
+			{
+				to: "/contacts",
+				icon: faAddressBook,
+				title: "Контакты",
+				exact: true
+			}
+		];
+
+		console.log(navLinks);
+
+		return(
+			<div className="app__sidebar">
+				<div className="sidebar__header">
+					<img src={logo} alt="Логотип Добро почта" className="sidebar__logo"/>
+				</div>
+
+				<FontAwesomeIcon
+					icon={faBars}
+					className="sidebar__navBtn"
+					onClick={this.handleNavToggle}/>
+	
+				<nav className={`sidebar__nav ${this.state.visible ? 'visible' : ''}`}>
+					{
+						navLinks.map((link, index)=> {
+							return(
+								<NavLink
+									key={index}
+									to={link.to}
+									className="nav__link"
+									activeClassName="is-active"
+									exact={link.exact}
+									onClick={this.handleNavToggle}>
+									<FontAwesomeIcon icon={link.icon} className="nav__icon"/>
+									{link.title}
+								</NavLink>
+							);
+						})
+					}
+				</nav>
+			</div>
+		);
+	}
 }
 
 export default Sidebar;

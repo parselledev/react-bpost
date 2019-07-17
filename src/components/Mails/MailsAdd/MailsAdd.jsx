@@ -7,14 +7,13 @@ import {createStructuredSelector} from 'reselect';
 
 import {selectAuthUsername} from 'Redux/auth/auth.selectors';
 import {mailsAdd} from 'Redux/mails/mails.actions';
-
 import Modal from 'Components/UI/Modal/Modal';
 import Form from 'Components/UI/Form/Form';
 import Button from 'Components/UI/Button/Button';
 import Input from 'Components/UI/Input/Input';
 import {Formik, Field} from 'formik';
 import * as Yup from 'yup';
-import {faEdit} from '@fortawesome/free-solid-svg-icons';
+import {faPencilAlt} from '@fortawesome/free-solid-svg-icons';
 
 class MailsAddContainer extends Component {
 
@@ -31,21 +30,27 @@ class MailsAddContainer extends Component {
   formInitialValues = {
     social: 'vk',
     target: '',
-    text: ''
+    text: '',
+    recaptcha: ""
   };
+
+  handleModalToggle = () => {
+    this.setState({
+      modalVisible: !this.state.modalVisible
+    });
+  }
 
   handleSubmit = (values, {resetForm}) => {
     const {social, target, text} = values;
     const {username} = this.props;
     this.props.mailsAdd(username, social, target, text);
     resetForm(this.formInitialValues);
-    this.setState({modalVisible: false});
-  }
-
-  handleReset = () => {
+    this.handleModalToggle();
   }
 
   render() {
+
+    const {modalVisible} = this.state;
 
     const formSchema = Yup.object().shape({
       social: Yup.string()
@@ -56,14 +61,17 @@ class MailsAddContainer extends Component {
       text: Yup.string()
             .min(5, 'Минимум 5 символов')
             .max(100, 'Максимум 100 символов')
-            .required('Обязательное поле')
+            .required('Обязательное поле'),
+      recaptcha: Yup.string()
+        .required('Обязательное поле')
     });
 
     const form = (
       <Formik
         initialValues={this.formInitialValues}
         validationSchema={formSchema}
-        onSubmit={this.handleSubmit}>
+        onSubmit={this.handleSubmit}
+        setFieldValue>
           {(props) => (
             <Form onSubmit={props.handleSubmit}>
               <Field component={Input.FormSelect} name="social">
@@ -82,6 +90,11 @@ class MailsAddContainer extends Component {
                 rows="3"
                 placeholder="Текст письма"/>
 
+              <Field
+                component={Input.FormReCaptcha}
+                setFieldValue={props.setFieldValue}
+                name="recaptcha"/>
+
               <Button
                 classMod="medium--blue"
                 type="submit"
@@ -93,16 +106,22 @@ class MailsAddContainer extends Component {
 
     return(
       <div className="mails__add">
-        <Modal
-          title="Добавить письмо"
-          content={form}
-          visible={this.state.modalVisible}>
-          <Button
-            className="mails__addBtn"
-            classMod="medium--iconed--success"
-            text="Написать"
-            icon={faEdit}/>
-        </Modal>
+        {
+          modalVisible ?
+            <Modal
+              title="Написать письмо"
+              content={form}
+              handleModalClose={this.handleModalToggle}>
+            </Modal>
+            :
+            ''
+        }
+        <Button
+          className="mails__addBtn"
+          classMod="medium--iconed--success"
+          text="Написать"
+          icon={faPencilAlt}
+          onClick={this.handleModalToggle}/>
       </div>
     );
   }
